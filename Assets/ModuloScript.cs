@@ -77,7 +77,12 @@ public class ModuloScript : MonoBehaviour
             Start();
         }
     }
+    public int GetDigit(int number, int nth){
+        while(number >= 10*nth)
+        number /= 10;
 
+    return number % 10;
+    }
     public void PressClearButton()
     {
         if(moduleSolved)
@@ -101,6 +106,33 @@ public class ModuloScript : MonoBehaviour
         if(inputText.text.Length < 3)
         {
             inputText.text += pressedNumber;
+        }
+    }
+    public string TwitchHelpMessage = "Use '!{0} 123' to press the buttons  1, 2, 3. To submit your answer use '!{0} submit'! And use '!{0} clear' to clear your answer!";
+    IEnumerator ProcessTwitchCommand(string command)
+    {
+        if (command.Equals("submit", StringComparison.InvariantCultureIgnoreCase) )
+    {
+        yield return submitButton;
+    }
+           
+        else{ if (command.Equals("clear", StringComparison.InvariantCultureIgnoreCase) )
+    {
+        yield return clearButton;
+    }
+        else{
+        int tried;
+        if (int.TryParse(command, out tried)){
+            tried=int.Parse(command);
+            for(int i = 1; i<=tried.ToString().Length; i++){
+                int final = (GetDigit(tried, i))-1;
+                if(final == -1){
+                    final = 9;
+                }
+                yield return keypadButton[final];
+            }
+        }
+        }
         }
     }
 }
