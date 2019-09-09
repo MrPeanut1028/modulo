@@ -108,31 +108,28 @@ public class ModuloScript : MonoBehaviour
             inputText.text += pressedNumber;
         }
     }
-    public string TwitchHelpMessage = "Use '!{0} 123' to press the buttons  1, 2, 3. To submit your answer use '!{0} submit'! And use '!{0} clear' to clear your answer!";
+    public string TwitchHelpMessage = "Use !{0} submit <number> to submit the specified number!";
     IEnumerator ProcessTwitchCommand(string command)
     {
-        if (command.Equals("submit", StringComparison.InvariantCultureIgnoreCase) )
-    {
-        yield return submitButton;
-    }
-           
-        else{ if (command.Equals("clear", StringComparison.InvariantCultureIgnoreCase) )
-    {
-        yield return clearButton;
-    }
-        else{
+        string commt = command.ToUpper();
+        string commfinal = commt.Replace("SUBMIT ", "");
         int tried;
-        if (int.TryParse(command, out tried)){
-            tried=int.Parse(command);
-            for(int i = 1; i<=tried.ToString().Length; i++){
-                int final = (GetDigit(tried, i))-1;
-                if(final == -1){
-                    final = 9;
-                }
-                yield return keypadButton[final];
+        if(int.TryParse(commfinal, out tried)){
+            tried = int.Parse(commfinal);
+            yield return null;
+            clearButton.OnInteract();
+            for(int i=0;i<commfinal.Length;i++){
+                int btntopress = int.Parse(commfinal[i].ToString())-1;
+                if(btntopress==-1){btntopress=9;}
+                keypadButton[btntopress].OnInteract();
             }
+            submitButton.OnInteract();
+            yield break;
         }
-        }
+        else{
+            yield return null;
+			yield return "sendtochaterror Digit not valid.";
+			yield break;
         }
     }
 }
